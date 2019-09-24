@@ -18,7 +18,7 @@ namespace PlaygroundAspMVC.MvcAuthTeste.App_Start
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/Profile/signin"),
+                LoginPath = new PathString("/Account/Login"),
                 Provider = new CookieAuthenticationProvider
                 {
                     OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
@@ -27,7 +27,6 @@ namespace PlaygroundAspMVC.MvcAuthTeste.App_Start
                 }
             });
 
-            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
         }
     }
 }

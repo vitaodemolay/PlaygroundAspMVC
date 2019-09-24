@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
+namespace PlaygroundAspMVC.Teste.Controllers
 {
     public class HomeController : Controller
     {
@@ -25,12 +25,6 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
-        }
-
-        [Authorize]
-        public ActionResult Teste()
-        {
-            return RedirectToAction("About");
         }
     }
 }
