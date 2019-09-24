@@ -1,0 +1,192 @@
+﻿@model PubliAX.Web.Models.Profile.UserManagerViewModel
+
+@{
+    ViewBag.Title = "Gerenciador de Usuário";
+    Layout = "~/Views/Shared/_LayoutGentelella.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+
+@using (Html.BeginForm("userManager", "Profile", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div id="FormUserMng" class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(model => model.userId)
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Nome</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "form-control", placeholder = "Nome" } })
+                @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Login</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.login, new { htmlAttributes = new { @class = "form-control", placeholder = "Login" } })
+                @Html.ValidationMessageFor(model => model.login, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Email</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.email, new { htmlAttributes = new { @class = "form-control", placeholder = "Email" } })
+                @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Celular</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.celphone, new { htmlAttributes = new { @class = "form-control celphone", placeholder = "Celular" } })
+                @Html.ValidationMessageFor(model => model.celphone, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" data-bind="visible: editCGC()">
+            <label class="control-label col-md-2">Tipo Pessoa</label>
+            <div class="col-md-10">
+                <input class="myRadio" type="radio" value="F" name="typePerson" id="optF" checked  />@Html.Label("Física")
+                <input class="myRadio" type="radio" value="J" name="typePerson" id="optJ" />@Html.Label("Jurídica")
+                @Html.ValidationMessageFor(model => model.typePerson, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" data-bind="text: labelCgc() + ': '"></label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.cgc, new { htmlAttributes = new { @id = "edCgc", @class = "form-control cpf myReadonly", placeholder = "CPF" } })
+                @Html.ValidationMessageFor(model => model.cgc, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" data-bind="visible: !editCGC()">
+            <label class="control-label col-md-2">Fornecedor / Promotor</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.provName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+            </div>
+        </div>
+
+        <div class="form-group" data-bind="visible: !editCGC()">
+            <label class="control-label col-md-2">Desvincular Cadastro  </label>
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.cleanUserForn, new { htmlAttributes = new { @id = "cleanUserForn", @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.cleanUserForn, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Permissões Admin.</label>
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.userAdmin, new { htmlAttributes = new { @class = "form-control", @data_bind = "" } })
+                    @Html.ValidationMessageFor(model => model.userAdmin, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+
+        <div class="form-group" style="margin-top:30px">
+            <div class="col-md-offset-2 col-md-3">
+                <button type="submit" class="btn btn-primary form-control">Salvar</button>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="text-center">
+    @Html.ActionLink("[ Voltar ]", "listUser")
+</div>
+
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+
+        var ViewModel = function (tipoPessoa, fornclear) {
+            var self = this;
+
+            self.labelCgc = ko.observable("CPF");
+            self.editCGC = ko.observable(true);
+
+
+            if (tipoPessoa != "F")
+                self.labelCgc("CNPJ");
+
+            if (fornclear == false)
+                self.editCGC(false);
+
+            $("#cleanUserForn").change(function () {
+                if (this.checked) {
+                    self.editCGC(true);
+                    self.applyReadOnly(!self.editCGC());
+                }
+            });
+
+            self.applyReadOnly = function (value) {
+                $(".myReadonly").attr("readonly", value);
+            };
+
+            self.eventRbTipo = function () {
+                if ($("#optF").is(":checked")) {
+                    self.labelCgc("CPF");
+                }
+                else {
+                    self.labelCgc("CNPJ");
+                }
+            };
+
+            self.applyReadOnly(!self.editCGC());
+        };
+
+        var tipoPessoa = "@Model.typePerson";
+        var fornclear = "@Model.cleanUserForn";
+
+        if (fornclear.toUpperCase() == "TRUE")
+            fornclear = true;
+        else
+            fornclear = false;
+
+        var VO = new ViewModel(tipoPessoa, fornclear);
+        ko.applyBindings(VO, document.getElementById("FormUserMng"));
+
+        $(function () {
+            $(".myRadio")
+                .change(function () {
+                    if ($(this).is(':checked')){
+                        if ($(this).val() == "F") {
+                            $("#edCgc")
+                                .removeClass("cnpj")
+                                .addClass("cpf")
+                                .attr("placeholder", "CPF")
+                                .inputmask("mask", { "mask": "999.999.999-99" }, { reverse: true });
+                        }
+                        else if ($(this).val() == "J"){
+                            $("#edCgc")
+                                .removeClass("cpf")
+                                .addClass("cnpj")
+                                .attr("placeholder", "CNPJ")
+                                .inputmask("mask", { "mask": "99.999.999/9999-99" }, { reverse: true });
+                        }
+
+                        VO.eventRbTipo();
+                    }
+                });
+        });
+    </script>
+}
+

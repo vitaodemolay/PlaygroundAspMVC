@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewBag.Title = "CheckMailSuccess";
+    Layout = "~/Views/Shared/_LayoutGentelella.cshtml";
+
+    PubliAX.Domain.DTO.UserDto loginUser = User.Identity.IsAuthenticated ? ViewData["LoginUser"] as PubliAX.Domain.DTO.UserDto : null;
+
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Checagem de Email</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <span> @loginUser.login, </span>
+            <p>
+                <span>Seu email '@loginUser.email' foi validado corretamente. </span>
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <p></p>
+        <div class="col-md-12">
+            @Html.ActionLink("[ Voltar ]", "Index")
+        </div>
+    </div>
+</div>

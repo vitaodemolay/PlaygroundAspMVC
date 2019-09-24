@@ -1,0 +1,56 @@
+﻿@*Menu de notificações*@
+@model IList<PubliAX.Domain.DTO.NotificationDto>
+
+@{
+    int NumbNot = Model == null ? 0 : Model.Count();
+
+}
+
+<a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+    <i class="fa fa-envelope-o"></i>
+    <span class="badge bg-green">@NumbNot</span>
+</a>
+<ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            var ts = DateTime.Now.Subtract(item.registerdate);
+
+            string _time = "";
+            if (ts.Days > 1)
+            { _time = $"{ts.Days} dias atrás"; }
+            else if (ts.Days == 1)
+            { _time = $"{ts.Days} dia atrás"; }
+            else if (ts.Hours > 1)
+            { _time = $"{ts.Hours} horas atrás"; }
+            else if (ts.Hours == 1)
+            { _time = $"{ts.Hours} hora atrás"; }
+            else
+            { _time = $"{ts.Minutes} minutos atrás"; }
+            <li>
+                <a href="@Url.Action("setReadedAction","Notication", new { id=item.notificationId  })">
+                    <i class="fa fa-user-circle"></i>
+                    <span>
+                        <span>@item.sender</span>
+                        <span class="time">@_time</span>
+                    </span>
+                    <span class="message">
+                        @( new HtmlString(item.body))
+                    </span>
+                </a>
+            </li>
+        }
+    }
+
+    <li>
+        <div class="text-center">
+            <a href="@Url.Action("Index", "Notication")">
+                <span>
+                    <strong>Ver Todas      </strong>
+                    <i class="fa fa-angle-right"></i>
+                </span>
+            </a>
+        </div>
+    </li>
+</ul>

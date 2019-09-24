@@ -1,0 +1,95 @@
+﻿@model PubliAX.Web.Models.Profile.LoginViewModel
+@using Microsoft.Owin.Security
+
+@{
+    ViewBag.Title = "signin";
+    Layout = "~/Views/Shared/_LayoutProfile.cshtml";
+
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-lg-4"></div>
+        <div class="col-xs-12 col-lg-4">
+            <div class="jumbotron" style="margin-top:150px; border:0.5px solid #000000;">
+                <div class="text-center" style="margin-bottom:30px;">
+                    <h3>Login</h3>
+                </div>
+                <section id="LoginForm">
+                    @using (Html.BeginForm("signin", "Profile", FormMethod.Post, new { ReturnUrl = ViewBag.ReturnUrl }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(f => f.login, new { @class = "form-control input-lg", @placeholder = "Informe o Login" })
+                                    @Html.ValidationMessageFor(f => f.login, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    @Html.PasswordFor(f => f.senha, new { @class = "form-control input-lg", @placeholder = "Informe a Senha" })
+                                    @Html.ValidationMessageFor(f => f.senha, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group" style="margin-top:30px;">
+                                    <button type="submit" class="btn btn-primary btn-lg form-control" style="height:45px;"><strong>Entrar</strong></button>
+                                </div>
+                                <p></p>
+                                <div class="form-group text-center">
+                                    <a href="passwordrecover">[ Esqueceu sua senha? ]</a>
+                                </div>
+
+                                <div class="form-group text-center">
+                                    <a href="loginrecover">[ Esqueceu seu Login? ]</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </section>
+            </div>
+        </div>
+        <div class="col-xs-12 col-lg-4"></div>
+        <div class="col-xs-12 col-lg-4"></div>
+    </div>
+
+    @{
+        var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+        if (loginProviders.Count() > 0)
+        {
+            <div class="row">
+                <div class="col-xs-12 col-lg-4"></div>
+                <div class="col-xs-12 col-lg-4">
+                    @using (Html.BeginForm("ExternalLogin", "Profile", new { ReturnUrl = ViewBag.ReturnUrl }))
+                    {
+                        @Html.AntiForgeryToken()
+                        foreach (AuthenticationDescription p in loginProviders)
+                        {
+                            <button type="submit"
+                                    class="btn btn-info form-control"
+                                    id="@p.AuthenticationType"
+                                    name="provider"
+                                    value="@p.AuthenticationType"
+                                    title="Logar usando sua conta do
+                                    @p.Caption">
+                                <strong>Logar com @p.AuthenticationType</strong>
+                            </button>
+                        }
+                    }
+                </div>
+                <div class="col-xs-12 col-lg-4"></div>
+                <div class="col-xs-12 col-lg-4"></div>
+            </div>
+        }
+
+    }
+
+    <div class="row" style="margin-top:10px">
+        <div class="col-xs-12 col-lg-4"></div>
+        <div class="col-xs-12 col-lg-4">
+            <div>
+                <a href="signup" class="btn btn-success form-control"><strong>Criar Novo Usuário</strong></a>
+            </div>
+        </div>
+        <div class="col-xs-12 col-lg-4"></div>
+        <div class="col-xs-12 col-lg-4"></div>
+    </div>
+</div>
+

@@ -1,0 +1,169 @@
+﻿@model PubliAX.Web.Models.Prov.RelateProvViewModel
+
+@{
+    ViewBag.Title = "Relate";
+    Layout = "~/Views/Shared/_LayoutGentelella.cshtml";
+}
+
+<h2>Cadastro de Fornecedor / Promotor</h2>
+
+@{
+    PubliAX.Domain.DTO.UserDto _user = ViewData["LoginUser"] as PubliAX.Domain.DTO.UserDto;
+    string _userType = _user.type == PubliAX.Domain.Enum.personType.business ? "J" : "F";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div id="CadForn" class="form-horizontal">
+
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.typePerson, "Tipo Pessoa:", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input class="myRadio" type="radio" value="F" name="typePerson" id="optF" checked />@Html.Label("Física", htmlAttributes: new { @id = "labeloptF" })
+                <input class="myRadio" type="radio" value="J" name="typePerson" id="optJ" />@Html.Label("Jurídica", htmlAttributes: new { @id = "labeloptJ" })
+                @Html.ValidationMessageFor(model => model.typePerson, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2 cnpj-cpf" data-bind="text: labelCgc() + ': '"></label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.cgc, new { htmlAttributes = new { @id = "edCgc", @class = "form-control", @data_bind = "value: cgc" } })
+                @Html.ValidationMessageFor(model => model.cgc, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <span class="span-notif-cpf-cnpj">*** Favor informar corretamente o numero do </span><span class="span-notif-cpf-cnpj" data-bind="text: labelCgc"></span>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Validar" class="btn btn-primary btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("[ Voltar ]", "Index", "Home")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        var _cgc = "@_user.cnpfj";
+        var _type = "@_userType";
+
+
+        var ViewModel = function (cgc) {
+            var self = this;
+
+            self.labelCgc = ko.observable("CPF");
+            self.cgc = ko.observable(cgc);
+            if (_type == "J" && cgc != "")
+                self.labelCgc = ko.observable("CNPJ");
+
+            self.eventRbTipo = function () {
+                if ($("#optF").is(":checked")) {
+                    self.labelCgc("CPF");
+                }
+                else {
+                    self.labelCgc("CNPJ");
+                }
+            };
+        };
+
+        var VO = new ViewModel(_cgc);
+        ko.applyBindings(VO, document.getElementById("CadForn"));
+
+        $(function () {
+            if (_cgc == "") {
+                $("#edCgc")
+                    .removeClass("cnpj")
+                    .addClass("cpf")
+                    .inputmask("mask", { "mask": "999.999.999-99" }, { reverse: true });
+
+                $(".myRadio")
+                    .change(function () {
+                        if ($(this).is(':checked')) {
+                            if ($(this).val() == "F") {
+                                $("#edCgc")
+                                    .removeClass("cnpj")
+                                    .addClass("cpf")
+                                    .inputmask("mask", { "mask": "999.999.999-99" }, { reverse: true });
+                            }
+                            else if ($(this).val() == "J") {
+                                $("#edCgc")
+                                    .removeClass("cpf")
+                                    .addClass("cnpj")
+                                    .inputmask("mask", { "mask": "99.999.999/9999-99" }, { reverse: true });
+                            }
+
+                            VO.eventRbTipo();
+                        }
+                    });
+            }
+            else
+            {
+                $("#edCgc")
+                    .attr('readonly', 'readonly');
+
+                if (_type == "F")
+                {
+                    $("#edCgc")
+                        .removeClass("cnpj")
+                        .addClass("cpf")
+                        .inputmask("mask", { "mask": "999.999.999-99" }, { reverse: true });
+
+                    $("#optF")
+                        .show()
+                        .prop('checked', true);
+
+                    $("#labeloptF")
+                        .show();
+
+                    $("#optJ")
+                        .hide()
+                        .prop('checked', false);
+
+                    $("#labeloptJ")
+                        .hide();
+
+                }
+                else
+                {
+                    $("#edCgc")
+                        .removeClass("cpf")
+                        .addClass("cnpj")
+                        .inputmask("mask", { "mask": "99.999.999/9999-99" }, { reverse: true });
+
+                    $("#optJ")
+                        .show()
+                        .prop('checked', true);
+
+                    $("#labeloptJ")
+                        .show();
+
+                    $("#optF")
+                        .hide()
+                        .prop('checked', false);
+
+                    $("#labeloptF")
+                        .hide();
+                }
+
+            }
+
+
+        });
+    </script>
+}

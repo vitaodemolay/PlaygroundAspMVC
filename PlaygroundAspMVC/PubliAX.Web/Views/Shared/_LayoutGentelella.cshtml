@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PubliAX</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/nprogress.css" rel="stylesheet" />
+    <link href="~/Libs/Gentelella/css/custom.min.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/DataTables/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+
+@{ 
+    PubliAX.Domain.DTO.UserDto loginUser = User.Identity.IsAuthenticated ? ViewData["LoginUser"] as PubliAX.Domain.DTO.UserDto : null;
+
+    var _avatar = "~/Libs/Img/user.png";
+    if (!string.IsNullOrEmpty(loginUser.avatar))
+    {
+        _avatar = loginUser.avatar;
+    }
+}
+
+
+<body class="nav-md">
+
+    <div id="overlay" hidden="hidden"><div class="spinner"></div></div>
+    <div class="container body">
+        <div class="main_container">
+            <div class="col-md-3 left_col">
+                <div class="left_col scroll-view">
+                    <div class="navbar nav_title" style="border: 0;">
+                        <a href="~/Home/index" class="site_title"> <img style="width: 50px;" src="~/Libs/Img/Logo.png" /> <span>Portal Winn</span></a>
+                    </div>
+                    <div class="clearfix"></div>
+
+                    <br />
+                    <!-- sidebar menu -->
+                    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                        @Html.Partial("_MenuLateral")
+                    </div>
+                    <!-- /sidebar menu -->
+
+                </div>
+            </div>
+            <!-- top navigation -->
+            <div class="top_nav">
+                <div class="nav_menu">
+                    <nav>
+                        <div class="nav toggle">
+                            <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                        </div>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="">
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    <img src="@VirtualPathUtility.ToAbsolute(_avatar)" alt="">@loginUser.login
+                                    <span class=" fa fa-angle-down"></span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                    <li><a href="~/Home/profile"> Profile</a></li>
+                                    <li><a href="~/Profile/signout"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                                </ul>
+                            </li>
+                            @* Menu de Notificações *@
+                            <li role="presentation" class="dropdown">
+                                @Html.Partial("_MenuNotificacoes", loginUser.notifications)
+                            </li>
+                            @* Fim Menu de notificações *@
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <!-- /top navigation -->
+            <!-- page content -->
+            <div class="right_col" role="main">
+                <div class="">
+                    <div class="page-title">
+                        <div class="title_left">
+                            @*<h3>@ViewBag.Title</h3>*@
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="x_panel">
+                                <div class="x_content">
+                                    @RenderBody()
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /page content -->
+            <!-- footer content -->
+            <footer>
+                <div class="pull-right">
+                    @{
+                        var _version = ViewContext.Controller.GetType().Assembly.GetName().Version;
+                    }
+                    &copy; @DateTime.Now.Year - by <a href="http://www.solucoesgerenciais.com.br/" target="_blank">Soluções Gerenciais</a> - V@_version
+                </div>
+                <div class="clearfix"></div>
+            </footer>
+            <!-- /footer content -->
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/fastclick");
+    @Scripts.Render("~/bundles/nprogress");
+    @Scripts.Render("~/bundles/Gentelella");
+    @Scripts.Render("~/bundles/inputmask");
+    @Scripts.Render("~/bundles/KnockoutJs")
+    <script type="text/javascript" src="~/Scripts/lib/masks.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+
+
+
+</html>

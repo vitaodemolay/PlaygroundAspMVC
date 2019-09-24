@@ -1,0 +1,75 @@
+﻿@model PubliAX.Web.Models.Invite.RevalidateInviteViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_LayoutGentelella.cshtml";
+}
+
+<h2>Revalidação de Convite</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal" id="FormInvRev">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(f => f.inviteId);
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.email, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+            <div class="col-xs-9 col-md-4">
+                @Html.EditorFor(model => model.email, new { htmlAttributes = new {@id="email", @class = "form-control", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-xs-1 col-md-1">
+                <a id="btEditEmail" href="#" class="btn btn-sm btn-warning" data-bind="click: editEmail">Editar</a>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.expiration, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+            <div class="col-xs-9 col-md-4">
+                @Html.EditorFor(model => model.expiration, new { htmlAttributes = new { @id = "expir", @class = "form-control dateMask", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.expiration, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-xs-1 col-md-1">
+                <a id="btEditExp" href="#" class="btn btn-sm btn-warning" data-bind="click: editExp">Editar</a>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-xs-10 col-md-4">
+                <input type="submit" value="Revalidar" class="btn btn-primary btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("[ Voltar ]", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        var viewModel = function () {
+            var self = this;
+
+
+            self.editEmail = function () {
+                $('#email').attr('readonly', false);
+                $('#btEditEmail').css('visibility', 'hidden');
+            }
+
+            self.editExp = function () {
+                $('#expir').attr('readonly', false);
+                $('#btEditExp').css('visibility', 'hidden');
+            }
+        }
+
+        ko.applyBindings(new viewModel(), document.getElementById("FormInvRev"));
+    </script>
+}

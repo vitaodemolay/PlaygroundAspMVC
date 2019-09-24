@@ -1,0 +1,251 @@
+﻿@model PubliAX.Web.Models.Prov.ProvRegisterViewModel
+
+@{
+    ViewBag.Title = "register";
+    Layout = "~/Views/Shared/_LayoutGentelella.cshtml";
+    string labelcgc = Model.typePerson == 'F' ? "CPF" : "CNPJ";
+    string labelInsMun = Model.typePerson == 'F' ? "RG" : "Insc. Municipal";
+    string placeHolInsMun = Model.typePerson == 'F' ? "RG do Fornecedor" : "Inscrição Municipal";
+}
+
+<h2>Cadastro de Fornecedor / Promotor</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(f => f.typePerson)
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Dados Principais</strong></div>
+            <div class="panel-body">
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.cgc, labelcgc, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.EditorFor(model => model.cgc, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.cgc, "", new { @class = "text-danger" })
+                    </div>
+
+                    @Html.LabelFor(model => model.name, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "form-control", placeholder = "nome do fornecedor" } })
+                        @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @if (Model.typePerson == 'J')
+                    {
+                        @Html.LabelFor(model => model.razao, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                        <div class="col-xs-10 col-md-4">
+                            @Html.EditorFor(model => model.razao, new { htmlAttributes = new { @class = "form-control", placeholder = "razão social" } })
+                            @Html.ValidationMessageFor(model => model.razao, "", new { @class = "text-danger" })
+                        </div>
+                    }
+
+                    @Html.LabelFor(model => model.insMun, labelInsMun, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.EditorFor(model => model.insMun, new { htmlAttributes = new { @class = "form-control", placeholder = placeHolInsMun } })
+                        @Html.ValidationMessageFor(model => model.insMun, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Dados de Contato</strong></div>
+            <div class="panel-body">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.address, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.EditorFor(model => model.address, new { htmlAttributes = new { @class = "form-control", placeholder = "endereço do fornecedor" } })
+                        @Html.ValidationMessageFor(model => model.address, "", new { @class = "text-danger" })
+                    </div>
+
+                    @Html.LabelFor(model => model.neighbor, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.EditorFor(model => model.neighbor, new { htmlAttributes = new { @class = "form-control", placeholder = "bairro do fornecedor" } })
+                        @Html.ValidationMessageFor(model => model.neighbor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.city, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.EditorFor(model => model.city, new { htmlAttributes = new { @class = "form-control", placeholder = "cidade do fornecedor" } })
+                        @Html.ValidationMessageFor(model => model.city, "", new { @class = "text-danger" })
+                    </div>
+
+                    @Html.LabelFor(model => model.state, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.DropDownListFor(model => model.state, ViewBag.State as List<SelectListItem>, new { @class = "form-control dropdownCad", placeholder = "estado do fornecedor" })
+                        @Html.ValidationMessageFor(model => model.state, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.zipcode, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.EditorFor(model => model.zipcode, new { htmlAttributes = new { @class = "form-control cep", placeholder = "cep do fornecedor" } })
+                        @Html.ValidationMessageFor(model => model.zipcode, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.phone, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.EditorFor(model => model.phone, new { htmlAttributes = new { @class = "form-control phone", placeholder = "telefone do fornecedor" } })
+                        @Html.ValidationMessageFor(model => model.phone, "", new { @class = "text-danger" })
+                    </div>
+
+                    @Html.LabelFor(model => model.email, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.EditorFor(model => model.email, new { htmlAttributes = new { @class = "form-control", placeholder = "email do fornecedor" } })
+                        @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Dados de Pagamento</strong></div>
+            <div class="panel-body">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.banc, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.DropDownListFor(model => model.banc, ViewBag.Banc as List<SelectListItem>, null, new { @class = "form-control dropdownCad", placeholder = "banco de pagamento", @id = "ddBanc" })
+                        @Html.ValidationMessageFor(model => model.banc, "", new { @class = "text-danger" })
+                    </div>
+
+                    @Html.LabelFor(model => model.accountType, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.DropDownListFor(model => model.accountType, ViewBag.AccountType as List<SelectListItem>, null, new { @class = "form-control dropdownCad", placeholder = "tipo de conta", @id = "ddType" })
+                        @Html.ValidationMessageFor(model => model.accountType, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.agency, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.EditorFor(model => model.agency, new { htmlAttributes = new { @class = "form-control ", placeholder = "agencia do banco", @id = "edAgency" } })
+                        @Html.ValidationMessageFor(model => model.agency, "", new { @class = "text-danger" })
+                    </div>
+
+                    @Html.LabelFor(model => model.account, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.EditorFor(model => model.account, new { htmlAttributes = new { @class = "form-control ", placeholder = "numero da conta", @id = "edAccount" } })
+                        @Html.ValidationMessageFor(model => model.account, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.favCpf, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.EditorFor(model => model.favCpf, new { htmlAttributes = new { @class = "form-control cpf", placeholder = "CPF do Favorecido" } })
+                        @Html.ValidationMessageFor(model => model.favCpf, "", new { @class = "text-danger" })
+                        <small class="text-danger">** Necessário somente se diferente do cadastro</small>
+                    </div>
+
+                    @Html.LabelFor(model => model.favName, htmlAttributes: new { @class = "control-label col-xs-2 col-md-2" })
+                    <div class="col-xs-10 col-md-4">
+                        @Html.EditorFor(model => model.favName, new { htmlAttributes = new { @class = "form-control", placeholder = "Nome do Favorecido" } })
+                        @Html.ValidationMessageFor(model => model.favName, "", new { @class = "text-danger" })
+                        <small class="text-danger">** Necessário somente se diferente do cadastro</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-xs-10 col-md-4">
+                <input type="submit" value="Salvar" class="btn btn-primary btn-default" />
+            </div>
+        </div>
+    </div>
+
+}
+
+<div class="row">
+    @Html.ActionLink("[ Voltar ]", "Index", "Home")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(function () {
+            var selectBanc = "@Model.banc";
+            var selectTc = "@Model.accountType";
+
+            if (selectBanc == "") {
+                selectBanc = "001";
+                selectTc = "Co";
+            }
+
+            var ApplyMasks = function (value) {
+                if (value == "001") {
+                    $("#edAgency")
+                        .inputmask("mask", { "mask": "9{4}-9|X|x", "greedy": true }, { reverse: true });
+
+                    $("#edAccount")
+                        .inputmask("mask", { "mask": "9{4,7}-9", "greedy": true }, { reverse: true });
+                }
+
+                if (value == "033") {
+                    $("#edAgency")
+                        .inputmask("mask", { "mask": "9{4}", "greedy": true }, { reverse: true });
+
+                    $("#edAccount")
+                        .inputmask("mask", { "mask": "9{8}-9", "greedy": true }, { reverse: true });
+                }
+
+                if (value == "104") {
+                    $("#edAgency")
+                        .inputmask("mask", { "mask": "9{4}", "greedy": true }, { reverse: true });
+
+                    $("#edAccount")
+                        .inputmask("mask", { "mask": "9{9}", "greedy": true }, { reverse: true });
+
+                    $("#ddType").find('[value="CF"]').show();
+                }
+
+                if (value == "237") {
+                    $("#edAgency")
+                        .inputmask("mask", { "mask": "9{4}", "greedy": true }, { reverse: true });
+
+                    $("#edAccount")
+                        .inputmask("mask", { "mask": "9{7}-9", "greedy": true }, { reverse: true });
+                }
+
+                if (value == "341") {
+                    $("#edAgency")
+                        .inputmask("mask", { "mask": "9{4}", "greedy": true }, { reverse: true });
+
+                    $("#edAccount")
+                        .inputmask("mask", { "mask": "9{5}-9", "greedy": true }, { reverse: true });
+                }
+            };
+
+            $("#ddBanc").find('[value="' + selectBanc + '"]').attr('selected', true);
+            $("#ddType").find('[value="' + selectTc + '"]').attr('selected', true);
+
+
+            if (selectBanc != "104")
+                $("#ddType").find('[value="CF"]').hide();
+
+
+            ApplyMasks(selectBanc);
+
+            $("#ddBanc").change(function () {
+                var value = $("#ddBanc").val();
+                $("#ddType").find('[value="CF"]').hide();
+                ApplyMasks(value);
+            });
+        });
+    </script>
+}
