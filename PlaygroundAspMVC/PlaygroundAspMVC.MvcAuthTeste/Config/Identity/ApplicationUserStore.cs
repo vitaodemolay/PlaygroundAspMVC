@@ -51,11 +51,7 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Config.Identity
 
         public void Dispose()
         {
-            if (ApplicationStoreContext.DataBase != null)
-            {
-                ApplicationStoreContext.DataBase.Clear();
-                ApplicationStoreContext.DataBase = null;
-            }
+
         }
     }
 
@@ -65,7 +61,8 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Config.Identity
 
         public static void Init()
         {
-            CreateDb();
+            if(DataBase == null || DataBase.Count <= 0)
+                CreateDb();
         }
 
         private static void CreateDb()

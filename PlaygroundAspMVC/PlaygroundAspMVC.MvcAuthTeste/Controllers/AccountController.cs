@@ -28,6 +28,34 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
             }
         }
 
+        private async Task RegisterLogin(string email)
+        {
+            var user = await UserManager.FindByEmailAsync(email);
+
+            SerializeCustomPrincipal serializemodel = new SerializeCustomPrincipal
+            {
+                name = user.UserName,
+                role = user.role,
+                userId = Guid.Parse(user.Id),
+                email = user.email,
+            };
+
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+
+            string userData = serializer.Serialize(serializemodel);
+
+            FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket(
+                                                                1,
+                                                                user.UserName,
+                                                                DateTime.Now,
+                                                                DateTime.Now.AddMinutes(20),
+                                                                false,
+                                                                userData);
+            string encTicket = FormsAuthentication.Encrypt(authTicket);
+            HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encTicket);
+            Response.Cookies.Add(faCookie);
+        }
+
         private IAuthenticationManager AuthenticationManager
         {
             get
@@ -97,30 +125,7 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
             {
                 case SignInStatus.Success:
 
-                    var user = await UserManager.FindByEmailAsync(model.Email);
-
-                    SerializeCustomPrincipal serializemodel = new SerializeCustomPrincipal
-                    {
-                        name = user.UserName,
-                        role = user.role,
-                        userId = Guid.Parse(user.Id),
-                        email = user.email,
-                    };
-
-                    JavaScriptSerializer serializer = new JavaScriptSerializer();
-
-                    string userData = serializer.Serialize(serializemodel);
-
-                    FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket(
-                                                                        1,
-                                                                        user.UserName,
-                                                                        DateTime.Now,
-                                                                        DateTime.Now.AddMinutes(20),
-                                                                        false,
-                                                                        userData);
-                    string encTicket = FormsAuthentication.Encrypt(authTicket);
-                    HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encTicket);
-                    Response.Cookies.Add(faCookie);
+                    await RegisterLogin(model.Email);
 
                     return RedirectToLocal(returnUrl);
     
@@ -149,7 +154,7 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    await RegisterLogin(user.email);
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -163,9 +168,7 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
         
         public ActionResult LogOff()
         {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            HttpCookie authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
-            Response.Cookies.Remove(authCookie.Name);
+            FormsAuthentication.SignOut();
             return RedirectToAction("Index", "Home");
         }
     }

@@ -3,6 +3,16 @@ using Microsoft.AspNet.Identity;
 
 namespace PlaygroundAspMVC.MvcAuthTeste.Config.Identity
 {
+    internal class SuccessIdentityResult: IdentityResult
+    {
+        public SuccessIdentityResult(bool success = true)
+           : base(success)
+        {
+
+        }
+    }
+
+
     public class ApplicationUserManager : UserManager<ApplicationUser>
     {
 
@@ -13,11 +23,19 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Config.Identity
         }
 
 
+        public override async Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
+        {
+            user.password = password;
+            await _store.CreateAsync(user);
+
+            return new SuccessIdentityResult();
+        }
+
         public override async Task<IdentityResult> CreateAsync(ApplicationUser user)
         {
             await _store.CreateAsync(user);
 
-            return new IdentityResult();
+            return new SuccessIdentityResult();
         }
 
 
