@@ -1,11 +1,15 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using PlaygroundAspMVC.MvcAuthTeste.Config.Authentication;
 using PlaygroundAspMVC.MvcAuthTeste.Config.Identity;
 using PlaygroundAspMVC.MvcAuthTeste.Models;
+using System;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
+using System.Web.Security;
 
 namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
 {
@@ -92,6 +96,32 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+
+                    var user = await UserManager.FindByEmailAsync(model.Email);
+
+                    SerializeCustomPrincipal serializemodel = new SerializeCustomPrincipal
+                    {
+                        name = user.UserName,
+                        role = user.role,
+                        userId = Guid.Parse(user.Id),
+                        email = user.email,
+                    };
+
+                    JavaScriptSerializer serializer = new JavaScriptSerializer();
+
+                    string userData = serializer.Serialize(serializemodel);
+
+                    FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket(
+                                                                        1,
+                                                                        user.UserName,
+                                                                        DateTime.Now,
+                                                                        DateTime.Now.AddMinutes(20),
+                                                                        false,
+                                                                        userData);
+                    string encTicket = FormsAuthentication.Encrypt(authTicket);
+                    HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encTicket);
+                    Response.Cookies.Add(faCookie);
+
                     return RedirectToLocal(returnUrl);
     
                 case SignInStatus.Failure:
@@ -130,11 +160,12 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            HttpCookie authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+            Response.Cookies.Remove(authCookie.Name);
             return RedirectToAction("Index", "Home");
         }
     }
