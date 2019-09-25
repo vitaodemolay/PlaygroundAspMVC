@@ -39,7 +39,7 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Config.Identity
 
         public Task<ApplicationUser> FindByNameAsync(string userName)
         {
-            return Task.FromResult(ApplicationStoreContext.DataBase.FirstOrDefault(f => f.UserName == userName));
+            return Task.FromResult(ApplicationStoreContext.DataBase.FirstOrDefault(f => f.email == userName));
         }
 
         public async Task UpdateAsync(ApplicationUser user)
@@ -51,8 +51,11 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Config.Identity
 
         public void Dispose()
         {
-            ApplicationStoreContext.DataBase.Clear();
-            ApplicationStoreContext.DataBase = null;
+            if (ApplicationStoreContext.DataBase != null)
+            {
+                ApplicationStoreContext.DataBase.Clear();
+                ApplicationStoreContext.DataBase = null;
+            }
         }
     }
 

@@ -18,7 +18,7 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Config.Identity
 
         public ApplicationUser()
         {
-
+            this.userId = Guid.NewGuid();
         }
 
         public ApplicationUser(Guid userId)

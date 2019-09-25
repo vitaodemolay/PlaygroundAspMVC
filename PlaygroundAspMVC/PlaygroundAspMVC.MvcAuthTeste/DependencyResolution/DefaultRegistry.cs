@@ -18,10 +18,12 @@
 namespace PlaygroundAspMVC.MvcAuthTeste.DependencyResolution {
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.Owin;
+    using Microsoft.Owin.Security;
     using PlaygroundAspMVC.MvcAuthTeste.Config.Identity;
     using StructureMap.Configuration.DSL;
     using StructureMap.Graph;
-	
+    using System.Web;
+
     public class DefaultRegistry : Registry {
         #region Constructors and Destructors
 
@@ -40,6 +42,7 @@ namespace PlaygroundAspMVC.MvcAuthTeste.DependencyResolution {
             For<UserManager<ApplicationUser, string>>().Use<ApplicationUserManager>();
             For<ApplicationUserStore>().Use<ApplicationUserStore>();
             For<IUserStore<ApplicationUser>>().Use<ApplicationUserStore>();
+            For<IAuthenticationManager>().Use(() => HttpContext.Current.GetOwinContext().Authentication);
         }
 
         #endregion

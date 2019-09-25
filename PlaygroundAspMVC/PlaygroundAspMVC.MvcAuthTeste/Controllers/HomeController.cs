@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
 namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
+        [AllowAnonymous]
         public ActionResult Index()
         {
             return View();
@@ -25,12 +23,6 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
-        }
-
-        [Authorize]
-        public ActionResult Teste()
-        {
-            return RedirectToAction("About");
         }
     }
 }
