@@ -6,6 +6,14 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers.Apis
     public class TestController : ApiController
     {
         [Authorize]
+        [HttpGet]
+        [Route("api/Test/auth/")]
+        public IEnumerable<string> auth()
+        {
+            return new string[] { "value1 - new", "value2 - new" };
+        }
+
+        
           // GET: api/Test
         public IEnumerable<string> Get()
         {

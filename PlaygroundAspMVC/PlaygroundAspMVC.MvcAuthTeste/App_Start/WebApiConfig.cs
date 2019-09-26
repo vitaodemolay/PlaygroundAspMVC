@@ -6,9 +6,15 @@ namespace PlaygroundAspMVC.MvcAuthTeste.App_Start
     {
         public static void Register(HttpConfiguration config)
         {
-            
+
             // Web API routes
             config.MapHttpAttributeRoutes();
+
+            //config.Routes.MapHttpRoute(
+            //    name: "ActionBasedApi",
+            //    routeTemplate: "api/{controller}/{action}/{id}",
+            //    defaults: new { id = RouteParameter.Optional }
+            //);
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
