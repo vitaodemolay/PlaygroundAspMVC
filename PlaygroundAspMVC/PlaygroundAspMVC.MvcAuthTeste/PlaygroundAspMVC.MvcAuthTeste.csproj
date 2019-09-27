@@ -176,6 +176,7 @@
     <Compile Include="App_Start\StructuremapMvc.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Config\Authentication\CustomPrincipal.cs" />
+    <Compile Include="Config\Authorization\AuthorizationResult.cs" />
     <Compile Include="Config\Authorization\AuthorizationServerProvider.cs" />
     <Compile Include="Config\Identity\ApplicationSignInManager.cs" />
     <Compile Include="Config\Identity\ApplicationUser.cs" />
@@ -236,6 +237,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Account\ReceiveToken.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -2,10 +2,12 @@
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using PlaygroundAspMVC.MvcAuthTeste.Config.Authentication;
+using PlaygroundAspMVC.MvcAuthTeste.Config.Authorization;
 using PlaygroundAspMVC.MvcAuthTeste.Config.Identity;
 using PlaygroundAspMVC.MvcAuthTeste.Config.Parameters;
 using PlaygroundAspMVC.MvcAuthTeste.Models;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -102,7 +104,7 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
 
         private ActionResult RedirectToLocal(string returnUrl)
         {
-            if (Url.IsLocalUrl(returnUrl))
+            if (!string.IsNullOrEmpty(returnUrl))
             {
                 return Redirect(returnUrl);
             }
@@ -120,23 +122,40 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Post,
-                    RequestUri = new Uri($"{Request.Url.Scheme}://{Request.Url.Authority}/api/token?username={email}&password={password}&grant_type={nameof(password)}"),
+                    RequestUri = new Uri($"{Request.Url.Scheme}://{Request.Url.Authority}/api/token"),
                     Headers =
                     {
                         { HttpRequestHeader.ContentType.ToString(), "application/x-www-form-urlencoded" },
                     },
-
                 };
 
-                var response = await _httpClient.SendAsync(request);
+                var keyValues = new List<KeyValuePair<string, string>>();
+                keyValues.Add(new KeyValuePair<string, string>("username", email));
+                keyValues.Add(new KeyValuePair<string, string>("password", password));
+                keyValues.Add(new KeyValuePair<string, string>("grant_type", "password"));
 
-                var Token = Guid.NewGuid().ToString();
-                return RedirectToLocal(returnUrl + $"-{Token}");
+                request.Content = new FormUrlEncodedContent(keyValues);
+
+                var response = await _httpClient.SendAsync(request);
+                var authResult = await response.Content.ReadAsAsync<AuthorizationResult>();
+
+                if(authResult != null)
+                {
+                    return RedirectToLocal($"{returnUrl}{authResult.access_token}");
+                }
+
+                return RedirectToAction("Index", "Home");
             }
 
             return RedirectToAction("Login", "Account", new { returnUrl = $"{Request.Url.OriginalString}" });
         }
 
+
+        public ActionResult ReceiveToken(string token)
+        {
+            ViewBag.Token = token;
+            return View();
+        }
 
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
