@@ -43,6 +43,7 @@ namespace PlaygroundAspMVC.MvcAuthTeste.DependencyResolution {
             For<ApplicationUserStore>().Use<ApplicationUserStore>();
             For<IUserStore<ApplicationUser>>().Use<ApplicationUserStore>();
             For<IAuthenticationManager>().Use(() => HttpContext.Current.GetOwinContext().Authentication);
+            For<IValidateApplicationUserRepository>().Use<ValidateApplicationUserRepository>();
         }
 
         #endregion

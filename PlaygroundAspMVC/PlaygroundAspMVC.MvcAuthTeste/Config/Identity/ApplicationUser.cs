@@ -38,6 +38,11 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Config.Identity
             return Task.FromResult(new ClaimsIdentity(GetClaims()));
         }
 
+        internal Task<ClaimsIdentity> GenerateUserIdentityAsync(string authenticationType)
+        {
+            return Task.FromResult(new ClaimsIdentity(GetClaims(), authenticationType));
+        }
+
         private IEnumerable<Claim> GetClaims()
         {
             yield return new Claim("name", name);

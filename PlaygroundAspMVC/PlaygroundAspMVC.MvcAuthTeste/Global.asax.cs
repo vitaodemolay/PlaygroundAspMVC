@@ -1,5 +1,6 @@
 ﻿using PlaygroundAspMVC.MvcAuthTeste.App_Start;
 using PlaygroundAspMVC.MvcAuthTeste.Config.Authentication;
+using PlaygroundAspMVC.MvcAuthTeste.Config.Parameters;
 using System;
 using System.Web;
 using System.Web.Http;
@@ -15,6 +16,8 @@ namespace PlaygroundAspMVC.MvcAuthTeste
     {
         protected void Application_Start()
         {
+            SecurityParameters.Init();
+
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
