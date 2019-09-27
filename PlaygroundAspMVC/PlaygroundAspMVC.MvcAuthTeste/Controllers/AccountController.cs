@@ -3,8 +3,10 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using PlaygroundAspMVC.MvcAuthTeste.Config.Authentication;
 using PlaygroundAspMVC.MvcAuthTeste.Config.Identity;
+using PlaygroundAspMVC.MvcAuthTeste.Config.Parameters;
 using PlaygroundAspMVC.MvcAuthTeste.Models;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
@@ -20,6 +22,7 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
 
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private readonly HttpClient _httpClient;
 
         private void AddErrors(IdentityResult result)
         {
@@ -69,6 +72,8 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
         {
             UserManager = userManager;
             SignInManager = signInManager;
+
+            _httpClient = new HttpClient();
         }
 
         public ApplicationSignInManager SignInManager
@@ -105,12 +110,26 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult AuthGetToken(string returnUrl)
+        public async Task<ActionResult> AuthGetToken(string returnUrl)
         {
             if (User.Identity.IsAuthenticated)
             {
-                HttpClient client = new HttpClient();
-                
+                var email = (User as CustomPrincipal).email;
+                var password = SecurityParameters.SystemPasswordForRequestTokenApiAuthorization.ToString();
+
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri($"{Request.Url.Scheme}://{Request.Url.Authority}/api/token?username={email}&password={password}&grant_type={nameof(password)}"),
+                    Headers =
+                    {
+                        { HttpRequestHeader.ContentType.ToString(), "application/x-www-form-urlencoded" },
+                    },
+
+                };
+
+                var response = await _httpClient.SendAsync(request);
+
                 var Token = Guid.NewGuid().ToString();
                 return RedirectToLocal(returnUrl + $"-{Token}");
             }
@@ -144,7 +163,7 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
                     await RegisterLogin(model.Email);
 
                     return RedirectToLocal(returnUrl);
-    
+
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
@@ -181,7 +200,7 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
         }
 
 
-        
+
         public ActionResult LogOff()
         {
             FormsAuthentication.SignOut();
