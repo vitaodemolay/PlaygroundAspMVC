@@ -111,43 +111,38 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [AllowAnonymous]
         public async Task<ActionResult> AuthGetToken(string returnUrl)
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                var email = (User as CustomPrincipal).email;
-                var password = SecurityParameters.SystemPasswordForRequestTokenApiAuthorization.ToString();
+            var email = (User as CustomPrincipal).email;
+            var password = SecurityParameters.SystemPasswordForRequestTokenApiAuthorization.ToString();
 
-                var request = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri($"{Request.Url.Scheme}://{Request.Url.Authority}/api/token"),
-                    Headers =
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($"{Request.Url.Scheme}://{Request.Url.Authority}/api/token"),
+                Headers =
                     {
                         { HttpRequestHeader.ContentType.ToString(), "application/x-www-form-urlencoded" },
                     },
-                };
+            };
 
-                var keyValues = new List<KeyValuePair<string, string>>();
-                keyValues.Add(new KeyValuePair<string, string>("username", email));
-                keyValues.Add(new KeyValuePair<string, string>("password", password));
-                keyValues.Add(new KeyValuePair<string, string>("grant_type", "password"));
+            var keyValues = new List<KeyValuePair<string, string>>();
+            keyValues.Add(new KeyValuePair<string, string>("username", email));
+            keyValues.Add(new KeyValuePair<string, string>("password", password));
+            keyValues.Add(new KeyValuePair<string, string>("grant_type", "password"));
 
-                request.Content = new FormUrlEncodedContent(keyValues);
+            request.Content = new FormUrlEncodedContent(keyValues);
 
-                var response = await _httpClient.SendAsync(request);
-                var authResult = await response.Content.ReadAsAsync<AuthorizationResult>();
+            var response = await _httpClient.SendAsync(request);
+            var authResult = await response.Content.ReadAsAsync<AuthorizationResult>();
 
-                if(authResult != null)
-                {
-                    return RedirectToLocal($"{returnUrl}{authResult.access_token}");
-                }
-
-                return RedirectToAction("Index", "Home");
+            if (authResult != null)
+            {
+                return RedirectToLocal($"{returnUrl}{authResult.access_token}");
             }
 
-            return RedirectToAction("Login", "Account", new { returnUrl = $"{Request.Url.OriginalString}" });
+            return RedirectToAction("Index", "Home");
+
         }
 
 
@@ -178,14 +173,13 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-
                     await RegisterLogin(model.Email);
-
                     return RedirectToLocal(returnUrl);
 
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
+                    ViewBag.ReturnUrl = returnUrl;
                     return View(model);
             }
         }
@@ -229,23 +223,3 @@ namespace PlaygroundAspMVC.MvcAuthTeste.Controllers
 }
 
 
-
-
-// $"{Request.Url.Scheme}://{Request.Url.Authority}/api/token"
-
-/*
- * var client = new RestClient("http://localhost:60047/api/token");
- * var request = new RestRequest(Method.POST);
- * request.AddHeader("cache-control", "no-cache");
- * request.AddHeader("Connection", "keep-alive");
- * request.AddHeader("Cookie", "__RequestVerificationToken=cHxCAE0YDP4U7ItyafJP5gRS9jmhwdmzNr8aOpFNwXvq62M6nCheb-QHhftusjwpExQwrXvW9Q87_ZxcwOhS7cB4womjMXTdlZ9As8VTC1Y1");
- * request.AddHeader("Content-Length", "69");
- * request.AddHeader("Accept-Encoding", "gzip, deflate");
- * request.AddHeader("Host", "localhost:60047");
- * request.AddHeader("Postman-Token", "ba55f1d6-7084-4c5f-9b6a-89fa7b6e39c3,09eeeaf8-4a7e-4420-bdd6-ea3a44d07340");
- * request.AddHeader("Cache-Control", "no-cache");
- * request.AddHeader("User-Agent", "PostmanRuntime/7.17.1");
- * request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
- * request.AddParameter("undefined", "username=vitor.marcos%40gmail.com&password=123456&grant_type=password", ParameterType.RequestBody);
- * IRestResponse response = client.Execute(request);
-*/
