@@ -185,6 +185,7 @@
     <Compile Include="Config\Identity\ValidateApplicationUserRepository.cs" />
     <Compile Include="Config\Parameters\SecurityParameters.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Apis\AuthController.cs" />
     <Compile Include="Controllers\Apis\TestController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DependencyResolution\ControllerConvention.cs" />
