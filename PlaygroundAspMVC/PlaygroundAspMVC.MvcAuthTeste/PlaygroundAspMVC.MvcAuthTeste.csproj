@@ -45,6 +45,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Bogus, Version=28.3.1.0, Culture=neutral, PublicKeyToken=fa1bb3f3f218129a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Bogus.28.3.1\lib\net40\Bogus.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
@@ -178,6 +181,7 @@
     <Compile Include="Config\Authentication\CustomPrincipal.cs" />
     <Compile Include="Config\Authorization\AuthorizationResult.cs" />
     <Compile Include="Config\Authorization\AuthorizationServerProvider.cs" />
+    <Compile Include="Config\Fakers\JobOpportunitFaker.cs" />
     <Compile Include="Config\Identity\ApplicationSignInManager.cs" />
     <Compile Include="Config\Identity\ApplicationUser.cs" />
     <Compile Include="Config\Identity\ApplicationUserManager.cs" />
@@ -186,6 +190,7 @@
     <Compile Include="Config\Parameters\SecurityParameters.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Apis\AuthController.cs" />
+    <Compile Include="Controllers\Apis\JobOpportunitController.cs" />
     <Compile Include="Controllers\Apis\TestController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DependencyResolution\ControllerConvention.cs" />
@@ -196,6 +201,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\JobOpportunity.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
